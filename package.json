@@ -1,0 +1,28 @@
+{
+  "name": "geekart-nft",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "hardhat test ./test/*",
+    "init": "npx ts-node ./scripts/init.ts",
+    "mint": "npx ts-node ./scripts/mint.ts",
+    "drop": "npx ts-node ./scripts/drop.ts",
+    "status": "npx ts-node ./scripts/status.ts",
+    "listen": "npx ts-node ./scripts/listenMint.ts",
+    "mint_nft": "npx ts-node scripts/mint_nft.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.5"
+  },
+  "dependencies": {
+    "@contextprotocol/sdk": "^1.1.1",
+    "@openzeppelin/contracts": "^5.0.2",
+    "cli-spinners": "^3.0.0",
+    "dotenv": "^16.4.5",
+    "ora": "^8.0.1"
+  }
+}

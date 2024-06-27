@@ -1,0 +1,28 @@
+{
+    "chainId": "421614",
+    "name": "Real POW NFT",
+    "symbol": "RPOW",
+    "description": "Real POW NFTs",
+    "path": "nft",
+    "image": "cover.png",
+    "drops": {
+        "gen0": {
+            "name": "POW _ Gen 0",
+            "description": "First generation of POW NFTs",
+            "qty": 10,
+            "price": "0.0001",
+            "image": "cover.png",
+            "nftName": "POW #${tokenId}",
+            "nftDescription": "POW NFT Number ${tokenId}"
+        },
+        "gen1": {
+                "name": "POW _ Gen 1",
+                "description": "Second generation of POW NFTs",
+                "qty": 10,
+                "price": "0.0001",
+                "image": "cover.png",
+                "nftName": "POW #${tokenId}",
+                "nftDescription": "POW NFT Number ${tokenId}"
+        }
+    }
+}
