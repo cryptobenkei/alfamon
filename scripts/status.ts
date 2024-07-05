@@ -1,12 +1,19 @@
 import { ethers } from "ethers";
-import { getContext, title, error, log } from "./utils";
+import { loadConf, getContext } from "./utils";
+import { title, error, log } from "./utils/console"
+
 
 async function main() {
-  const { confData, context, provider, wallet, domainName } = await getContext();
+  const confData = await loadConf();
+  // const { confData, context, provider, wallet, domainName } = await getContext();
+    // Get information from context and load documents (verify).
+  const { address, context, domainName  } = await getContext(true);
+
   const doc = await context.document(`${domainName}/${confData.path}`);
 
-  title(`Status NFT ${doc.data.name}`)
-  log('NFT Address      : ', doc.data.address);
+  title(`Status NFT ${domainName}`)
+  log('NFT Address      : ', address);
+  /*
   log('NFT Minter       : ', doc.data.minter);
   log('Wallet Address   : ', (wallet.address !== '') ? wallet.address : 'Not deployed');
   log('Balance          : ', (wallet.address !== '') ? ethers.formatEther(await provider.getBalance(wallet.address)) : 'Not deployed');
@@ -28,7 +35,7 @@ async function main() {
     console.log(doc.data);
   } else {
     error('Please specify a tokenId to get the NFT details: npm status <tokenId>');
-  }
+  }*/
 
 }
 

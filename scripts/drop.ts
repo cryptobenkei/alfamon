@@ -19,7 +19,7 @@ async function main(dropName: string, action = "open") {
 
   title(`Drop ${domainName} : ${dropName}`);
   const resultDocument = await context.document(`${domainName}/drops/${dropName}`);
-  if (resultDocument.success) {
+  if (resultDocument.success)  {
     // Drop already exists.
     const dropDocument = resultDocument.data;
     const drop = {...dropDocument.data};
@@ -37,7 +37,7 @@ async function main(dropName: string, action = "open") {
     }
   }
   else {
-    // Step One : Set the cflexmarket contract as minter.
+    // Step One : Set the flexmarket contract as minter.
     await setMinter(collectionContract, flexmarketContract);
 
     // Step Two : Create a new drop ni the flexmarket contract.
