@@ -68,7 +68,7 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   // Step Two : update the drop (metadata)
   spinStart('Updating NFT metadata');
   let data = {...collectionDocument.data}
-  data.totalSupply += 1;
+  data.totalSupply += tokenId + 1;
   await collectionDocument.update(data);
   spinStop();
   log('Collection metadata  : ', `https://app.ctx.xyz/d/${domainName}/${confData.path}` )
@@ -78,7 +78,8 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   // Step three : update the NFT (metadata).
   spinStart('Updating NFT metadata');
   data = {...dropDocument.data}
-  data.totalMinted += 1;
+  console.log("TODO : put back + 1");
+  data.totalMinted += 2;
   await dropDocument.update(data);
   spinStop();
   await updateTx(db, transactionId, tokenId);
