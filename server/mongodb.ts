@@ -64,7 +64,7 @@ export async function updateTx(db: any, transactionId: string, tokenId: string) 
             minted: currentDate
         })
     } else {
-        await db.nftCollection.updateOne(
+        tx = await db.nftCollection.updateOne(
             { transactionId },
             { $set: { tokenId, minted: currentDate } }
         );

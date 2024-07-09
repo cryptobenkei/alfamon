@@ -75,13 +75,16 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   // Step three : update the NFT (metadata).
   log('Updating NFT Drop metadata', 'waiting');
   data = {...dropDocument.data}
-  console.log("TODO : put back + 1");
   data.totalMinted = data.totalMinted + 1;
   await dropDocument.update(data);
   await updateTx(db, transactionId, tokenId);
  
   log('Drop metadata        : ', `https://app.ctx.xyz/d/${domainName}/drops/${dropName}` )
   const urlMetadata = `https://app.ctx.xyz/d/${domainName}/drops/${dropName}`;
-  await cast(8691, urlMetadata);
+
+  let nft = await db.nftCollection.findOne({transactionId});
+  if (nft && nft.requesterId) {
+    await cast(nft.requesterId, urlMetadata);
+  }
 });
   };
