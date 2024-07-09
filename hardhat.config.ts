@@ -8,7 +8,7 @@ const config: HardhatUserConfig = {
   solidity: "0.8.24",
   networks: {
     sepolia: {
-      url: process.env.BLOCKHAIN_RPC,
+      url: process.env.BLOCKCHAIN_RPC,
       accounts: [`0x${process.env.WALLET_PRIVKEY}`]
     },
     degen: {

@@ -10,13 +10,17 @@
     "drop": "npx ts-node ./scripts/drop.ts",
     "status": "npx ts-node ./scripts/status.ts",
     "mint_nft": "npx ts-node scripts/mint_nft.ts",
+    "pm2-start": "pm2 start ecosystem.config.cjs",
     "start": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' server/server.ts"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
-    "hardhat": "^2.22.6"
+    "hardhat": "^2.22.6",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.3"
   },
   "dependencies": {
     "@contextprotocol/sdk": "^1.1.1",
@@ -27,9 +31,6 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "mongodb": "^6.8.0",
-    "nodemon": "^3.1.4",
-    "ora": "^8.0.1",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.3"
+    "ora": "^8.0.1"
   }
 }
