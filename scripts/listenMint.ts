@@ -10,23 +10,24 @@ async function main() {
 
     // Get information from context and load documents (verify).
     const { address, context, domainName, collectionDocument  } = await getContext(true);
+    if (collectionDocument === null) process.exit();
   
     // get Blockchain (and verify)
     const { collectionContract } = await getBlockchain(context, confData.chainId, address, true);
+    if (collectionContract === null) process.exit();
 
-  // Mint an NFT.
+  // Listen to NFT Minted events.
   title(`Listen to NFT Minted events ${confData.path}`)
   collectionContract.on("Minted", async (tokenId, dropId) => {
     title(`Create NFT ${tokenId} from drop ${dropId}`);
 
     // Load data from the drop.
     const dropData: any = loadData(`./data/drops/${dropId}.json`)
-    console.log(dropData);
+    const dropName = dropData.dropName;
 
     // get the document.
-    const dropName = dropData.dropName;
     const dropresult = await context.document(`${domainName}/drops/${dropName}`)
-    if (!dropresult.success) return;
+    if (!dropresult.success) process.exit();
     const dropDocument = dropresult.data;
     
     // Step One : create the metadata for the new NFT
@@ -38,9 +39,9 @@ async function main() {
       "price": 0,
       "attributes": [{
         "trait_type": "gen",
-        "value": "0"
+        "value": 0
       }, {
-        "trait_type": "level",
+        "trait_type": "batch",
         "value": 1
       } ]
     };

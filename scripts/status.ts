@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { loadConf, getContext } from "./utils";
+import { loadConf, getContext, getBlockchain } from "./utils";
 import { title, error, log } from "./utils/console"
 
 
@@ -9,6 +9,7 @@ async function main() {
     // Get information from context and load documents (verify).
   const { address, context, domainName  } = await getContext(true);
 
+  const { collectionContract, flexmarketContract, wallet } = await getBlockchain(context, confData.chainId, address, true);
   const doc = await context.document(`${domainName}/${confData.path}`);
 
   title(`Status NFT ${domainName}`)

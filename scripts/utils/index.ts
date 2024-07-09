@@ -86,16 +86,18 @@ async function getContext(verify: boolean = false ) {
 }
 
 async function getBlockchain(context, chainId, address = '', verify: boolean = false) {
-    const blockchainRPC = process.env.BLOCKHAIN_RPC as string;
+    const blockchainRPC = process.env.BLOCKCHAIN_RPC as string;
       // Retrieve the blockchain RPC from the environment variables
     if (!blockchainRPC || blockchainRPC === '') {
-        error('Setup your Blockhcain RPC in .env => BLOCKHAIN_RPC');
+        error('Setup your Blockhcain RPC in .env => BLOCKCHAIN_RPC');
     }
   
     // Retrieve chain information for flexmarket
     let flexmarket = await context.document('flexmarket');
     if (flexmarket.success) flexmarket = flexmarket.data;
     else error('Flexmarket does not exist');
+    const flexMarketVersion = flexmarket.versionNumber;
+    console.log("flexMarketVersion " + flexMarketVersion);
 
     const id = chainId.toString();
     if (!flexmarket.data.chains[id]) error('This ChainId is not deployed for flexmarket');
@@ -114,6 +116,7 @@ async function getBlockchain(context, chainId, address = '', verify: boolean = f
     const privateKey: `0x${string}` = `0x${process.env.WALLET_PRIVKEY}` as `0x${string}` || '0x';
     const provider = new ethers.JsonRpcProvider(blockchainRPC)
     const wallet = new ethers.Wallet(privateKey, provider);
+    console.log("Owner : " + wallet.address);
 
     const flexmarketContract = new ethers.Contract(flexMarketData.address, flexmarketABI, wallet);
     let collectionContract: ethers.Contract | null = null;
@@ -128,7 +131,7 @@ async function getBlockchain(context, chainId, address = '', verify: boolean = f
     const collectionContractFactory = new ContractFactory(collectionABI.abi, collectionABI.bytecode, wallet);
 
     // let flexMarketMinterContract;
-    return { provider, wallet, collectionContract, collectionContractFactory, collectionABI, flexmarketContract };
+    return { flexMarketVersion, provider, wallet, collectionContract, collectionContractFactory, collectionABI, flexmarketContract };
 }
 
 // Function to load data

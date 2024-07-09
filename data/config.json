@@ -1,19 +1,29 @@
 {
-    "chainId": "421614",
-    "name": "NFT Testing 1",
-    "symbol": "NF1",
-    "description": "Testing for NFTs - Test 1",
+    "chainId": "42161",
+    "name": "Alfamon",
+    "symbol": "AFM",
+    "description": "Alfamon, The Game",
     "path": "nft",
     "image": "cover.png",
     "drops": {
-        "gen0": {
-            "name": "test _ Gen 0",
-            "description": "First generation of NFTs",
+        "gen0day1": {
+            "name": "Alfamon - Gen0 - Day One",
+            "description": "First generation of Alfamons, Day One",
             "qty": 10,
-            "price": "0.0001",
+            "price": "0.001",
             "image": "cover.png",
-            "nftName": "test #${tokenId}",
-            "nftDescription": "test NFT Number ${tokenId}"
+            "nftName": "Alfamon #${tokenId}",
+            "nftDescription": "Alfamon ${tokenId} - The Egg",
+            "signer": "0x12E469d46cAF2555783D650e37beE6c4bC9D0631"
+        },"gen0day2": {
+            "name": "Alfamon - Gen0 - Day Two",
+            "description": "First generation of Alfamons, Day Two",
+            "qty": 10,
+            "price": "0.002",
+            "image": "cover.png",
+            "nftName": "Alfamon #${tokenId}",
+            "nftDescription": "Alfamon ${tokenId} - The Egg",
+            "signer": "0x12E469d46cAF2555783D650e37beE6c4bC9D0631"
         }
     }
 }

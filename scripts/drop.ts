@@ -15,11 +15,12 @@ async function main(dropName: string, action = "open") {
   const { drop } = await getDrop(context, domainName, confData, dropName, false);
 
   // get Blockchain (and verify)
-  const { collectionContract, flexmarketContract, wallet } = await getBlockchain(context, confData.chainId, address, true);
+  const { collectionContract, flexmarketContract, wallet, flexMarketVersion } = await getBlockchain(context, confData.chainId, address, true);
 
   title(`Drop ${domainName} : ${dropName}`);
+  
   const resultDocument = await context.document(`${domainName}/drops/${dropName}`);
-  if (resultDocument.success)  {
+  if (resultDocument.success && resultDocument.data)  {
     // Drop already exists.
     const dropDocument = resultDocument.data;
     const drop = {...dropDocument.data};
@@ -40,15 +41,17 @@ async function main(dropName: string, action = "open") {
     // Step One : Set the flexmarket contract as minter.
     await setMinter(collectionContract, flexmarketContract);
 
+    console.log("Create Drop... ", flexmarketContract );
     // Step Two : Create a new drop ni the flexmarket contract.
     const { dropId, transactionHash } = await createDrop( flexmarketContract, collectionContract.target, drop, wallet.address );
 
     // Step Three : Upload cover of the drop.
-    await uploadCover(context, drop, dropId, domainName);
+    // await uploadCover(context, drop, dropId, domainName);
 
     // step Four : Create the document for the drop.
     const collectionId = `ctx:${domainName}/${confData.path}`;
-    await createDropDocument(context, drop, dropName, dropId, domainName, collectionId, transactionHash)
+    await createDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
+    // await updateDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
     process.exit();
   }
 }
@@ -67,7 +70,7 @@ async function closeDrop(flexmarketContract, drop, dropDocument) {
   spinStop();
 }
 
-async function createDropDocument(context, drop, dropName, dropId, domainName, collectionId,  transactionHash) {
+async function createDropDocument(context,flexMarketVersion,  drop, dropName, dropId, domainName, collectionId,  transactionHash) {
   spinStart(`Creating context document`);
   const res = await context.createDocument(
     `drops/${dropName}`,
@@ -77,7 +80,7 @@ async function createDropDocument(context, drop, dropName, dropId, domainName, c
       collection: collectionId,
       nftName: drop.nftName,
       nftDescription: drop.nftDescription,
-      minterContract: "ctx:flexmarket",
+      minterContract: `ctx:flexmarket?v=${flexMarketVersion}`,
       dropId: dropId,
       totalSupply: drop.qty,
       totalMinted: 0,
@@ -86,6 +89,7 @@ async function createDropDocument(context, drop, dropName, dropId, domainName, c
       image: `ctx:${domainName}/assets/drop${dropId}`,
       start: new Date().toISOString(),
       status: 'open',
+      signer: drop.signer,
       transactionHash
     },
     []
@@ -101,6 +105,33 @@ async function createDropDocument(context, drop, dropName, dropId, domainName, c
     dropName,
     totalSupply: drop.qty
   }));
+  log('Saved  : ', `https://rpc.ctx.xyz/${domainName}/drops/${dropName}`);
+}
+
+async function updateDropDocument(context,flexMarketVersion,  drop, dropName, dropId, domainName, collectionId,  transactionHash) {
+  spinStart(`Creating context document`);
+  const document = await context.document(`${domainName}/drops/${dropName}`)
+  const res = await document.data.update(
+    {
+      name: drop.name,
+      description: drop.description,
+      collection: collectionId,
+      nftName: drop.nftName,
+      nftDescription: drop.nftDescription,
+      minterContract: `ctx:flexmarket?v=${flexMarketVersion}`,
+      dropId: dropId,
+      totalSupply: drop.qty,
+      totalMinted: 0,
+      price : drop.price,
+      referral: drop.refferal,
+      image: `ctx:${domainName}/assets/drop${dropId}`,
+      start: new Date().toISOString(),
+      status: 'open',
+      signer: drop.signer,
+      transactionHash
+    }
+  );
+  spinStop();
   log('Saved  : ', `https://rpc.ctx.xyz/${domainName}/drops/${dropName}`);
 }
 
@@ -140,7 +171,8 @@ async function createDrop(flexmarketContract, target, drop, treasury): Promise<{
       drop.qty,
       parseEther(drop.price),
       0,
-      treasury
+      treasury,
+      drop.signer
     );
     const transactionHash = tx.hash;
     log('CreateDrop ', 'wait for the tx...');
