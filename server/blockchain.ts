@@ -1,6 +1,6 @@
 import { cast } from "./neynar";
 import { getContext, getBlockchain, loadData, loadConf } from "../scripts/utils";
-import { log, title, spinStart, spinStop } from "../scripts/utils/console";
+import { log, title } from "../scripts/utils/console";
 
 import fs from "fs";
 import { updateTx } from './mongodb';
@@ -38,9 +38,10 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   const dropDocument = dropresult.data;
   
   // Step One : create the metadata for the new NFT
+  const newTokenId = tokenId;
   const nftData = {
-    "name": confData.drops[dropName].nftName.replace('${tokenId}', tokenId),
-    "description": confData.drops[dropName].nftDescription.replace('${tokenId}', tokenId),
+    "name": confData.drops[dropName].nftName.replace('${tokenId}', newTokenId),
+    "description": confData.drops[dropName].nftDescription.replace('${tokenId}', newTokenId),
     "image": dropDocument.data.image.replace('ctx:', 'https://rpc.ctx.xyz/'),
     "action": "none",
     "price": 0,
@@ -52,37 +53,33 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
       "value": 1
     } ]
   };
+  console.log(nftData);
 
   // Create new document.
-  console.log(`${confData.path}/${tokenId}`);
-
-  const nftMetadata = await context.document(`${domainName}/${confData.path}/${tokenId}`)
+  const nftMetadata = await context.document(`${domainName}/${confData.path}/${newTokenId}`)
   if (nftMetadata.success === false) {
-    spinStart('Storing metadata to Context');
-    const res = await context.createDocument( `${confData.path}/${tokenId}`, nftData, [] );
-    console.log(res);
-    spinStop();
+    log('Storing metadata to Context', 'waiting');
+    const res = await context.createDocument( `${confData.path}/${newTokenId}`, nftData, [] );
     log('NFT metadata         : ', `https://app.ctx.xyz/d/${domainName}/${confData.path}/${tokenId}` )
   }
 
   // Step Two : update the drop (metadata)
-  spinStart('Updating NFT metadata');
+  log('Updating NFT Collection metadata', 'waiting');
   let data = {...collectionDocument.data}
-  data.totalSupply += tokenId + 1;
+  data.totalSupply = data.totalSupply + 1;
   await collectionDocument.update(data);
-  spinStop();
   log('Collection metadata  : ', `https://app.ctx.xyz/d/${domainName}/${confData.path}` )
 
   fs.writeFileSync(`./data/nfts/${tokenId}.json`, JSON.stringify(nftData));
 
   // Step three : update the NFT (metadata).
-  spinStart('Updating NFT metadata');
+  log('Updating NFT Drop metadata', 'waiting');
   data = {...dropDocument.data}
   console.log("TODO : put back + 1");
-  data.totalMinted += 2;
+  data.totalMinted = data.totalMinted + 1;
   await dropDocument.update(data);
-  spinStop();
   await updateTx(db, transactionId, tokenId);
+ 
   log('Drop metadata        : ', `https://app.ctx.xyz/d/${domainName}/drops/${dropName}` )
   const urlMetadata = `https://app.ctx.xyz/d/${domainName}/drops/${dropName}`;
   await cast(8691, urlMetadata);
