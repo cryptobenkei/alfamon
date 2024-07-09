@@ -55,11 +55,15 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
 
   // Create new document.
   console.log(`${confData.path}/${tokenId}`);
-  spinStart('Storing metadata to Context');
-  const res = await context.createDocument( `${confData.path}/${tokenId}`, nftData, [] );
-  console.log(res);
-  spinStop();
-  log('NFT metadata         : ', `https://app.ctx.xyz/d/${domainName}/${confData.path}/${tokenId}` )
+
+  const nftMetadata = await context.document(`${domainName}/${confData.path}/${tokenId}`)
+  if (nftMetadata.success === false) {
+    spinStart('Storing metadata to Context');
+    const res = await context.createDocument( `${confData.path}/${tokenId}`, nftData, [] );
+    console.log(res);
+    spinStop();
+    log('NFT metadata         : ', `https://app.ctx.xyz/d/${domainName}/${confData.path}/${tokenId}` )
+  }
 
   // Step Two : update the drop (metadata)
   spinStart('Updating NFT metadata');
