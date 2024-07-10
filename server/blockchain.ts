@@ -53,7 +53,6 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
       "value": 1
     } ]
   };
-  console.log(nftData);
 
   // Create new document.
   const nftMetadata = await context.document(`${domainName}/${confData.path}/${newTokenId}`)
@@ -77,7 +76,8 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   data = {...dropDocument.data}
   data.totalMinted = data.totalMinted + 1;
   await dropDocument.update(data);
-  await updateTx(db, transactionId, tokenId);
+  const owner = await collectionContract.ownerOf(tokenId);
+  await updateTx(db, transactionId, tokenId, owner);
  
   log('Drop metadata        : ', `https://app.ctx.xyz/d/${domainName}/drops/${dropName}` )
   const urlMetadata = `https://app.ctx.xyz/d/${domainName}/drops/${dropName}`;

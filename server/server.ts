@@ -8,6 +8,11 @@ const port = 3001;
 
 app.use(express.json());
 
+app.get('/check', async (req: Request, res: Response) => {
+  console.log("CHECK **");
+  res.send('Checked');
+});
+
 app.post('/mint', async (req: Request, res: Response) => {
   console.log("MINT **", req.body);
   await updateLogs(db, req.body.id);
@@ -21,8 +26,7 @@ app.post('/mint-success', async (req: Request, res: Response) => {
 });
 
 app.post('/cast', (req: Request, res: Response) => {
-  const thread = spawn('node', ['./dist/cast.js'], { detached: true });
-  thread.unref();
+
   res.send('Cast thread started');
 });
 

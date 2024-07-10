@@ -53,13 +53,14 @@ export async function insertTx(db: any, transactionId: string, dropId: string, c
 }
 }
 
-export async function updateTx(db: any, transactionId: string, tokenId: string) {
+export async function updateTx(db: any, transactionId: string, tokenId: string, owner: string) {
     const currentDate = new Date();
     let tx = await db.nftCollection.findOne({transactionId})
     if (!tx) {
         tx = await db.nftCollection.insertOne({
             transactionId,
             tokenId,
+            owner,
             date: currentDate,
             minted: currentDate
         })
