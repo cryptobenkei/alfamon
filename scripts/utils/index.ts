@@ -3,8 +3,26 @@ import { log, error } from "./console";
 import { Context, Domain, Document } from '@contextprotocol/sdk';
 import * as collectionABI from "../../artifacts/contracts/NFTCollection.sol/NFTCollection.json";
 import fs from "fs";
+import crypto from "crypto";
 import dotenv from 'dotenv';
 dotenv.config();
+
+
+// Encrypt function
+function encrypt(publicKey: string, data: string): string {
+  const key = publicKey.split(String.raw`\n`).join('\n');
+  const buffer = Buffer.from(data, 'utf8');
+  const encrypted = crypto.publicEncrypt(key, buffer);
+  return encrypted.toString('base64');
+}
+
+// Decrypt function
+function decrypt(privateKey: string, encryptedData: string): string {
+  const key = privateKey.split(String.raw`\n`).join('\n');
+  const buffer = Buffer.from(encryptedData, 'base64');
+  const decrypted = crypto.privateDecrypt(key, buffer);
+  return decrypted.toString('utf8');
+}
 
 // Function to load data
 function loadConf(): any {
@@ -97,6 +115,7 @@ async function getBlockchain(context, chainId, address = '', verify: boolean = f
     if (flexmarket.success) flexmarket = flexmarket.data;
     else error('Flexmarket does not exist');
     const flexMarketVersion = flexmarket.versionNumber;
+    const flexMarketPubKey = flexmarket.data.publicKey;
     console.log("flexMarketVersion " + flexMarketVersion);
 
     const id = chainId.toString();
@@ -131,7 +150,7 @@ async function getBlockchain(context, chainId, address = '', verify: boolean = f
     const collectionContractFactory = new ContractFactory(collectionABI.abi, collectionABI.bytecode, wallet);
 
     // let flexMarketMinterContract;
-    return { flexMarketVersion, provider, wallet, collectionContract, collectionContractFactory, collectionABI, flexmarketContract };
+    return { flexMarketVersion, flexMarketPubKey, provider, wallet, collectionContract, collectionContractFactory, collectionABI, flexmarketContract };
 }
 
 // Function to load data
@@ -149,5 +168,7 @@ export {
     getBlockchain,
     loadConf,
     loadData,
-    getDrop
+    getDrop,
+    encrypt,
+    decrypt
 };

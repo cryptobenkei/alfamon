@@ -5,6 +5,13 @@
     "description": "Alfamon, The Game",
     "path": "nft",
     "image": "cover.png",
+    "webHookURL": "https://api.alfamon.xyz",
+    "webHookSecret": "789hcl297--dsgh26·344dsjj1",
+    "actions": [{
+        "name": "incubate",
+        "description": "Incubate your Alfamon, can be called once a day",
+        "webhook_uri": "incubate"
+    }],
     "drops": {
         "gen0day1": {
             "name": "Alfamon - Gen0 - Day One",
