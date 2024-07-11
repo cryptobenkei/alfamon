@@ -12,7 +12,11 @@ app.use(express.json());
 // Middleware function to verify API key
 const verifyApiKey = (req: Request, res: Response, next: NextFunction) => {
   const apiKey = req.headers['api-key'];
+  console.log(req.headers);
+  console.log(req.headers['api-key']);
+  console.log(process.env.SECRET_KEY);
   if (apiKey !== process.env.SECRET_KEY) {
+	  console.log('Invalid API KEY');
     return res.status(403).send('Forbidden: Invalid API Key');
   }
   next(); // Call next() to pass control to the next handler
