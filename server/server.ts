@@ -1,7 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { spawn } from 'child_process';
 import { listenToBlockchainEvents } from './blockchain';
-import { initMongoDB, updateLogs, insertTx } from './mongodb';
+import { initMongoDB, updateLogs, insertTx, incubate } from './mongodb';
 let db;
 const app = express();
 const port = 3001;
@@ -29,24 +28,31 @@ app.get('/check', async (req: Request, res: Response) => {
 
 app.post('/incubate', verifyApiKey, async (req: Request, res: Response) => {
   console.log("INCUBATE **");
-  res.json({ message: 'Incubated Today' });
+  const { tokenId } = req.body;
+  
+  if (!tokenId) {
+    return res.status(400).json({ error: 'tokenId is required' });
+  }
+
+  const result = await incubate(tokenId);
+  res.json({ message: 'Great Job, your NFT just evolved to the next level!' });
 });
 
 app.post('/mint', verifyApiKey, async (req: Request, res: Response) => {
   console.log("MINT **", req.body);
   await updateLogs(db, req.body.id);
   res.send('Log saved');
+  res.json({ message: 'Log accepted' });
 });
 
 app.post('/mint-success', verifyApiKey, async (req: Request, res: Response) => {
   console.log("SUCCESS **", req.body);
   await insertTx(db, req.body.transactionId, req.body.dropId, req.body.casterId, req.body.minterId );
-  res.send('Mint saved');
+  res.json({ message: 'Mint success' });
 });
 
 app.post('/cast', (req: Request, res: Response) => {
-
-  res.send('Cast thread started');
+  res.json({ message: 'Cast success' });
 });
 
 app.listen(port, async () => {

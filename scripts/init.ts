@@ -20,7 +20,10 @@ async function main() {
   if (collectionDocument) logCollection(collectionDocument);
 
   if (collectionDocument) {
-    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
+
+    // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
+    await await createLevels(context, confData, domainName);
+
   } else {
     // Deploy Smart Contract.
     const nftAddress = await deploySmartContract(collectionContractFactory, domainName, confData);
@@ -34,7 +37,11 @@ async function main() {
     // Store ABI.
     await storeABI(context, domainName, collectionABI);
     // await updateABI(context, domainName, collectionABI);
+
+    await await createLevels(context, confData, domainName);
   }
+
+  
 }
 
 /**
@@ -120,4 +127,21 @@ function logCollection(collectionDocument) {
   // process.exit();
 }
 
+async function createLevels(context, confData, domainName) {
+  const maxlevel = 1;
+  for (let i = 0; i <= maxlevel; i++) {
+    const level = i;
+    const levelPath = `assets/level${level}`;
+    const asset = await context.document(`${domainName}/${levelPath}`);
+    if (asset.success === false) {
+      spinStart('Uploading Levels to Context');
+      await context.createAsset(levelPath, `./data/assets/level${level}.png`);
+      console.log(levelPath, `./data/assets/level${level}.png`);
+      spinStop();
+      log('Uploaded : ', `https://rpc.ctx.xyz/${domainName}/${levelPath}`);
+    }
+  }
+  
+  
+}
 main();
