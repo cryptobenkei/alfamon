@@ -27,6 +27,11 @@ app.get('/check', async (req: Request, res: Response) => {
   res.send('Checked');
 });
 
+app.post('/incubate', verifyApiKey, async (req: Request, res: Response) => {
+  console.log("INCUBATE **");
+  res.send('Incubated Today');
+});
+
 app.post('/mint', verifyApiKey, async (req: Request, res: Response) => {
   console.log("MINT **", req.body);
   await updateLogs(db, req.body.id);
