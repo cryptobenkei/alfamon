@@ -11,9 +11,6 @@ app.use(express.json());
 // Middleware function to verify API key
 const verifyApiKey = (req: Request, res: Response, next: NextFunction) => {
   const apiKey = req.headers['api-key'];
-  console.log(req.headers);
-  console.log(req.headers['api-key']);
-  console.log(process.env.SECRET_KEY);
   if (apiKey !== process.env.SECRET_KEY) {
 	  console.log('Invalid API KEY');
     return res.status(403).send('Forbidden: Invalid API Key');
@@ -41,7 +38,6 @@ app.post('/incubate', verifyApiKey, async (req: Request, res: Response) => {
 app.post('/mint', verifyApiKey, async (req: Request, res: Response) => {
   console.log("MINT **", req.body);
   await updateLogs(db, req.body.id);
-  res.send('Log saved');
   res.json({ message: 'Log accepted' });
 });
 
