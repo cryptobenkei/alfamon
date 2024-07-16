@@ -28,7 +28,7 @@ export async function cast(fid, urlMetadata) {
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        parent_author_fid: 8691,
+        parent_author_fid: process.env.NEYNAR_FID,
         signer_uuid: process.env.NEYNAR_SIGNER,
         text
       })
