@@ -20,11 +20,11 @@ async function main(dropName: string, action = "open") {
   title(`Drop ${domainName} : ${dropName}`);
   
   const resultDocument = await context.document(`${domainName}/drops/${dropName}`);
-  if (resultDocument.success && resultDocument.data)  {
+  if (resultDocument.success && resultDocument.data && action !== 'open')  {
     // Drop already exists.
     const dropDocument = resultDocument.data;
     const drop = {...dropDocument.data};
-    logDrop(drop);    
+    logDrop(drop);
 
     if (action === "close") {
       // Close the Drop.
@@ -40,8 +40,8 @@ async function main(dropName: string, action = "open") {
   else {
     // Step One : Set the flexmarket contract as minter.
     await setMinter(collectionContract, flexmarketContract);
+    if (collectionContract === null) return;
 
-    console.log("Create Drop... ", flexmarketContract );
     // Step Two : Create a new drop ni the flexmarket contract.
     const { dropId, transactionHash } = await createDrop( flexmarketContract, collectionContract.target, drop, wallet.address );
 
@@ -50,8 +50,8 @@ async function main(dropName: string, action = "open") {
 
     // step Four : Create the document for the drop.
     const collectionId = `ctx:${domainName}/${confData.path}`;
-    await createDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
-    // await updateDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
+    // await createDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
+    await updateDropDocument(context, flexMarketVersion,  drop, dropName, dropId, domainName, collectionId, transactionHash);
     process.exit();
   }
 }

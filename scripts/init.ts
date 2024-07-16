@@ -19,26 +19,32 @@ async function main() {
   title(`NFT Collection ${domainName}`);
   if (collectionDocument) logCollection(collectionDocument);
 
-  if (collectionDocument) {
-
+  if (collectionDocument && false) {
+    console.log("Init");
     // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
-    await await createLevels(context, confData, domainName);
+    // await await createLevels(context, confData, domainName);
 
   } else {
     // Deploy Smart Contract.
+    console.log("\nDeploy & Update");
+    if (collectionDocument !== null) {
+      console.log(collectionDocument.data, confData)
+    }
+    
     const nftAddress = await deploySmartContract(collectionContractFactory, domainName, confData);
 
     // Create the Asset (cover).
-    await createAsset(context, confData, domainName);
+    // await createAsset(context, confData, domainName);
 
     // Create Document (metadata).
-    await createMetadata(context, confData, domainName, nftAddress, flexMarketPubKey)
+    // await createMetadata(context, confData, domainName, nftAddress, flexMarketPubKey)
+    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress)
 
     // Store ABI.
-    await storeABI(context, domainName, collectionABI);
-    // await updateABI(context, domainName, collectionABI);
+    // await storeABI(context, domainName, collectionABI);
+    await updateABI(context, domainName, collectionABI);
 
-    await await createLevels(context, confData, domainName);
+    // await await createLevels(context, confData, domainName);
   }
 
   
@@ -84,9 +90,12 @@ async function createMetadata(context, confData, domainName, nftAddress, flexMar
   log('Saved     : ', `https://app.ctx.xyz/d/${domainName}/nft`);
 }
 
-async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey) {
+async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress) {
   const data = {... collectionDocument.data };
   data.actions = confData.actions;
+  data.address = nftAddress;
+  data.totalSupply = 0;
+  data.chainId = confData.chainId;
   data.webHookURL = await encrypt(flexMarketPubKey, confData.webHookURL);
   data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
 

@@ -104,12 +104,12 @@ async function getContext(verify: boolean = false ) {
 }
 
 async function getBlockchain(context, chainId, address = '', verify: boolean = false) {
-    const blockchainRPC = process.env.BLOCKCHAIN_RPC as string;
+    const blockchainRPC = process.env['BLOCKHAIN_RPC_'+chainId] as string;
       // Retrieve the blockchain RPC from the environment variables
     if (!blockchainRPC || blockchainRPC === '') {
         error('Setup your Blockhcain RPC in .env => BLOCKCHAIN_RPC');
     }
-  
+      
     // Retrieve chain information for flexmarket
     let flexmarket = await context.document('flexmarket');
     if (flexmarket.success) flexmarket = flexmarket.data;
