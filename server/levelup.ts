@@ -23,11 +23,7 @@ export const updateMetadata = async(data) => {
         newData.level = data.newLevel;
         newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${data.newLevel}`;
         newData.leveledUp = data.leveledUp;
-<<<<<<< HEAD
-        console.log(newData);
-=======
         console.log('*** Update NFT!', newData);
->>>>>>> e092333ed8c36581bd519d9e58c24946962b2463
         await nft.update(newData);
         return true;
       } catch (e) {
