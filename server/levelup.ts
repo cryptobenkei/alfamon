@@ -18,17 +18,20 @@ export const updateMetadata = async(data) => {
     if (result.success && result.data) {
       try {
         const nft = result.data;
-        console.log('Update NFT!');
+        
         const newData: any = {...nft.data};
-        const level = newData.level ?  + newData.level + 1 : 1;
-        newData.level = level;
-        newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${level}`;
+        newData.level = data.newLevel;
+        newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${data.newLevel}`;
         newData.leveledUp = data.leveledUp;
+<<<<<<< HEAD
         console.log(newData);
+=======
+        console.log('*** Update NFT!', newData);
+>>>>>>> e092333ed8c36581bd519d9e58c24946962b2463
         await nft.update(newData);
         return true;
       } catch (e) {
-        console.log(e);
+        console.log("Error", e);
         return false;
       }
     } else return false;
@@ -46,7 +49,7 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
         return `NFT with tokenId ${tokenId} not found`;
     }
     const nftDoc:any = result.data.data;
-    const level = nftDoc.level || 0;
+    const level = nft.level ? nft.level : 0;
     const newLevel = level + 1;
 
     result = await context.document(`${domainName}/nft`);
@@ -74,12 +77,13 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
     let levelUp: boolean = false;
     switch (projectDoc.actions[level].type) {
         case 'button':
-            // Verify Secret
             levelUp = true;
         break;
         case 'secret':
             if (inputText === 'alfamon') {
                 levelUp = true;
+            } else {
+                return 'Invalid Secret';
             }
             // Verify Secret
         break;
@@ -94,8 +98,8 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
             $set: { level: newLevel, leveledUp: currentTimestamp }
             }
         );
-        await nftQueue.add('levelUp', { tokenId, level, leveledUp: currentTimestamp });
-        return `Your Alfamon is now Level ${level}`
+        await nftQueue.add('levelUp', { tokenId, newLevel, leveledUp: currentTimestamp });
+        return `Your Alfamon is now at Level ${newLevel}`
     } else {
         return 'Level Up Failed'   
     }

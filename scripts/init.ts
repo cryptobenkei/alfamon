@@ -39,13 +39,13 @@ async function main() {
     // Create Document (metadata).
     // await createMetadata(context, confData, domainName, nftAddress, flexMarketPubKey)
     // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress)
-    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
+    // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
 
     // Store ABI.
     // await storeABI(context, domainName, collectionABI);
     // await updateABI(context, domainName, collectionABI);
 
-    // await await createLevels(context, confData, domainName);
+    await await createLevels(context, confData, domainName);
   }
 
   
@@ -92,25 +92,36 @@ async function createMetadata(context, confData, domainName, nftAddress, flexMar
 }
 
 async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey) {
-  const data = {... collectionDocument.data };
+  let data = {... collectionDocument.data };
+  let res = { success: false };
+  data.totalSupply = 3;
   data.actions = confData.actions;
   data.actions = confData.actions.map(action => {
+  data.dropId = "ctx:alfamon/drops/gen0day1";
     if (action.secret && action.secret !== '') {
         action.secret = encrypt(flexMarketPubKey, action.secret);
     }
     return action;
-});
+  });
   // data.chainId = confData.chainId;
   // data.webHookURL = await encrypt(flexMarketPubKey, confData.webHookURL);
   // data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
-  
-  data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
-
-  console.log(confData, data);
   spinStart(`Updating NFT Contract Metadata in Context : ${confData.path}`);
     const document = await context.document(`${domainName}/nft`);
-    const res = await document.data.update(data);
+    // const res = await document.data.update(data);
   spinStop();
+
+  /*const drop = await context.document(`${domainName}/drops/gen0day1`);
+  if (drop.success && drop.data) {
+    const dropDocument = drop.data;
+    const dropData = {...dropDocument.data };
+    dropData.totalMinted = 3;
+    console.log(dropData);
+    spinStart(`Updating NFT Drop Metadata in Context`);
+    res = drop.data.update(dropData);
+    spinStop();
+  }*/
+
 
   log('Updated  : ', `https://app.ctx.xyz/d/${domainName}/nft => ${res.success ? 'success': 'fail'}`);
 }
@@ -145,15 +156,15 @@ function logCollection(collectionDocument) {
 
 async function createLevels(context, confData, domainName) {
   const maxlevel = 1;
-  for (let i = 0; i <= maxlevel; i++) {
+  for (let i = 3; i < 6; i++) {
     const level = i;
     const levelPath = `assets/level${level}`;
     const asset = await context.document(`${domainName}/${levelPath}`);
     if (asset.success === false) {
-      spinStart('Uploading Levels to Context');
+      spinStart(`Uploading Level ${level} to Context`);
       await context.createAsset(levelPath, `./data/assets/level${level}.png`);
-      console.log(levelPath, `./data/assets/level${level}.png`);
       spinStop();
+      console.log(levelPath, `./data/assets/level${level}.png`);
       log('Uploaded : ', `https://rpc.ctx.xyz/${domainName}/${levelPath}`);
     }
   }
