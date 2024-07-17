@@ -31,18 +31,19 @@ async function main() {
       console.log(collectionDocument.data, confData)
     }
     
-    const nftAddress = await deploySmartContract(collectionContractFactory, domainName, confData);
+    // const nftAddress = await deploySmartContract(collectionContractFactory, domainName, confData);
 
     // Create the Asset (cover).
     // await createAsset(context, confData, domainName);
 
     // Create Document (metadata).
     // await createMetadata(context, confData, domainName, nftAddress, flexMarketPubKey)
-    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress)
+    // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress)
+    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
 
     // Store ABI.
     // await storeABI(context, domainName, collectionABI);
-    await updateABI(context, domainName, collectionABI);
+    // await updateABI(context, domainName, collectionABI);
 
     // await await createLevels(context, confData, domainName);
   }
@@ -90,13 +91,19 @@ async function createMetadata(context, confData, domainName, nftAddress, flexMar
   log('Saved     : ', `https://app.ctx.xyz/d/${domainName}/nft`);
 }
 
-async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress) {
+async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey) {
   const data = {... collectionDocument.data };
   data.actions = confData.actions;
-  data.address = nftAddress;
-  data.totalSupply = 0;
-  data.chainId = confData.chainId;
-  data.webHookURL = await encrypt(flexMarketPubKey, confData.webHookURL);
+  data.actions = confData.actions.map(action => {
+    if (action.secret && action.secret !== '') {
+        action.secret = encrypt(flexMarketPubKey, action.secret);
+    }
+    return action;
+});
+  // data.chainId = confData.chainId;
+  // data.webHookURL = await encrypt(flexMarketPubKey, confData.webHookURL);
+  // data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
+  
   data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
 
   console.log(confData, data);

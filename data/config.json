@@ -8,14 +8,27 @@
     "webHookURL": "https://api.alfamon.xyz",
     "webHookSecret": "789hcl297--dsgh26·344dsjj1",
     "actions": [{
-        "name": "incubate",
-        "description": "Incubate your Alfamon, can be called once a day",
-        "webhook_uri": "incubate"
+        "name": "Incubate",
+        "type": "button",
+        "description": "Level Up for the first time, just click on the button: Incubate",
+        "input": "",
+        "cooldown": 0
     }, {
-        "name": "follow",
-        "description": "Follow @cryptobenkei",
-        "webhook_uri": "checkFollow",
-        "caster": "cryptobenkei"
+        "name": "Secret Incubation",
+        "type": "secret",
+        "description": "Second Level Up, This time tou need a Secret Only Context knows...",
+        "input": "Input the secret",
+        "secret": "alfamon",
+        "cooldown": 86400
+    },
+    {
+        "name": "Follow Up",
+        "type": "follow",
+        "description": "Follow @cryptobenkei and click the button 'Follow Up'",
+        "caster": "@cryptobenkei",
+        "input": "",
+        "secret": "",
+        "cooldown": 86400
     }],
     "drops": {
         "gen0day1": {

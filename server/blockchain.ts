@@ -5,29 +5,7 @@ import { log, title } from "../scripts/utils/console";
 import fs from "fs";
 import { updateTx } from './mongodb';
 
-export const levelUp = async(tokenId) => {
-  const confData = await loadConf();
-  const { context, domainName } = await getContext(true);
-  const result = await context.document(`${domainName}/${confData.path}/${tokenId}`);
-  if (result.success && result.data) {
-    try {
-      const nft = result.data;
-      console.log('Update NFT!');
-      const newData: any = {...nft.data};
-      const level = newData.level ?  + newData.level + 1 : 1;
-      newData.level = level;
-      newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${level}`;
-      console.log(newData);
-      await nft.update(newData);
-      log('NFT updated!', 'success');
-      return true;
-    } catch (e) {
-      console.log(e);
-      return false;
-    }
-  } else return false;
 
-}
 export const listenToBlockchainEvents = async (db: any) => {
     console.log('Listening to blockchain events...');
     // Add logic to listen to blockchain events here
@@ -68,6 +46,7 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
     "image": dropDocument.data.image.replace('ctx:', 'https://rpc.ctx.xyz/'),
     "action": "none",
     "price": 0,
+    "level": 0,
     "attributes": [{
       "trait_type": "gen",
       "value": 0
