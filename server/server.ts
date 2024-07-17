@@ -22,6 +22,7 @@ const worker = new Worker('NFTs', async job => {
   await updateMetadata(job.data);
   console.log(job.data);
 }, { connection });
+
 worker.on('completed', job => {
   console.log(`${job.id} has completed!`);
 });
