@@ -25,7 +25,7 @@ export const updateMetadata = async(data) => {
         newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${level}`;
         newData.leveledUp = data.leveledUp;
         console.log(newData);
-        // await nft.update(newData);
+        await nft.update(newData);
         return true;
       } catch (e) {
         console.log(e);
@@ -95,7 +95,7 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
             }
         );
         await nftQueue.add('levelUp', { tokenId, level, leveledUp: currentTimestamp });
-        return 'Level Up Ok - NFT'
+        return `Your Alfamon is now Level ${level}`
     } else {
         return 'Level Up Failed'   
     }
