@@ -1,4 +1,22 @@
+import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { getContext } from "../scripts/utils";
+
+
+async function isFollower(fid, fidFollower) {
+    const client = new NeynarAPIClient(process.env.NEYNAR_API as string);
+    let found;
+    let options: any = {};
+    do {
+        const response = await client.fetchUserFollowers(fid, options);
+        const users = response.result.users;
+        found = users.find((follow) => follow.fid === fidFollower);
+        if (response.result.users[0] === fid) found = true;
+        options = { cursor: response.result.next.cursor };
+    } while (found === false && options.cursor !== null)
+    return found;
+
+}
+
 function getLastNumber(str: string): number | null {
     // Use a regular expression to match the last number in the string
     const match = str.match(/(\d+)(?!.*\d)/);
@@ -84,6 +102,7 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
             // Verify Secret
         break;
         case 'follow':
+            // const found = await isFollower(, 8691);
         break;
     }
 

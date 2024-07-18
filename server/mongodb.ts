@@ -36,6 +36,7 @@ export async function updateLogs(db: any, id: string, action: string = '') {
 export async function insertTx(db: any, transactionId: string, dropId: string, casterId, requesterId) {
   // If topic does not exists, create a new one and store the latest version
   const currentDate = new Date();
+  const currentTimestamp = Math.floor(Date.now() / 1000);
   let tx = await db.nftCollection.findOne({transactionId});
   if (!tx) {
     tx = await db.nftCollection.insertOne({
@@ -43,7 +44,9 @@ export async function insertTx(db: any, transactionId: string, dropId: string, c
       dropId,
       casterId,
       requesterId,
-      date: currentDate
+      date: currentDate,
+      level:0,
+      leveledUp: currentTimestamp
     })
   } else {
     await db.nftCollection.updateOne(
@@ -64,12 +67,18 @@ export async function updateTx(db: any, transactionId: string, tokenId: string, 
             date: currentDate,
             minted: currentDate,
             level: 0,
-            leveledUp: currentDate
+            leveledUp: currentDate,
+            casterId: 0,
+            requeterId: 0
         })
     } else {
         tx = await db.nftCollection.updateOne(
             { transactionId },
-            { $set: { tokenId, minted: currentDate } }
+            { $set: {
+                tokenId,
+                minted: currentDate,
+                owner
+            } }
         );
     }
 }
