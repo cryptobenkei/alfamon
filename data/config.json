@@ -2,7 +2,7 @@
     "chainId": "8453",
     "name": "Alfamon",
     "symbol": "AFM",
-    "description": "Alfamon, a Farcaster + Base Game",
+    "description": "Alfamon is a pokemon-like NFT game built on Base, where players can collect and evolve unique creatures called “alfamons” through interactions with Farcaster.",
     "path": "nft",
     "image": "cover.png",
     "webHookURL": "https://api.alfamon.xyz",
@@ -10,13 +10,13 @@
     "actions": [{
         "name": "Incubate",
         "type": "button",
-        "description": "Level Up for the first time, just click on the button: Incubate",
+        "description": "Level Up your alfamon for the first time, just click on the button: Incubate",
         "input": "",
         "cooldown": 0
     }, {
         "name": "Secret Incubation",
         "type": "secret",
-        "description": "Second Level Up, This time tou need a Secret Only Context knows...",
+        "description": "Second Level Up, This time you need a Secret Only Context knows...",
         "input": "Input the secret",
         "secret": "alfamon",
         "cooldown": 86400
@@ -33,7 +33,7 @@
     "drops": {
         "gen0day1": {
             "name": "Alfamon - Gen0 - Day One",
-            "description": "Alfamon Generation Zero, Day One",
+            "description": "Now minting Gen0 : The first 100 Nfts",
             "qty": 100,
             "price": "0.0005",
             "image": "cover.png",

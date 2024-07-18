@@ -93,8 +93,10 @@ async function createMetadata(context, confData, domainName, nftAddress, flexMar
 
 async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey) {
   let data = {... collectionDocument.data };
-  // let res = { success: false };
+  let res = { success: false };
   // data.totalSupply = 3;
+  data.description = confData.description;
+  data.website = "https://alfamon.xyz";
   data.actions = confData.actions;
   data.actions = confData.actions.map(action => {
   // data.dropId = "ctx:alfamon/drops/gen0day1";
@@ -108,19 +110,20 @@ async function updateMetadata(context, confData, domainName, collectionDocument,
   // data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
   spinStart(`Updating NFT Contract Metadata in Context : ${confData.path}`);
     const document = await context.document(`${domainName}/nft`);
-    const res = await document.data.update(data);
+    res = await document.data.update(data);
   spinStop();
 
-  /*const drop = await context.document(`${domainName}/drops/gen0day1`);
+  const drop = await context.document(`${domainName}/drops/gen0day1`);
   if (drop.success && drop.data) {
     const dropDocument = drop.data;
     const dropData = {...dropDocument.data };
-    dropData.totalMinted = 3;
+    // dropData.totalMinted = 3;
+    dropData.description = confData.drops['gen0day1'].description;
     console.log(dropData);
     spinStart(`Updating NFT Drop Metadata in Context`);
     res = drop.data.update(dropData);
     spinStop();
-  }*/
+  }
 
 
   log('Updated  : ', `https://app.ctx.xyz/d/${domainName}/nft => ${res.success ? 'success': 'fail'}`);
