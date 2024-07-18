@@ -39,13 +39,13 @@ async function main() {
     // Create Document (metadata).
     // await createMetadata(context, confData, domainName, nftAddress, flexMarketPubKey)
     // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey, nftAddress)
-    // await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
+    await updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey)
 
     // Store ABI.
     // await storeABI(context, domainName, collectionABI);
     // await updateABI(context, domainName, collectionABI);
 
-    await await createLevels(context, confData, domainName);
+    // await await createLevels(context, confData, domainName);
   }
 
   
@@ -93,11 +93,11 @@ async function createMetadata(context, confData, domainName, nftAddress, flexMar
 
 async function updateMetadata(context, confData, domainName, collectionDocument, flexMarketPubKey) {
   let data = {... collectionDocument.data };
-  let res = { success: false };
-  data.totalSupply = 3;
+  // let res = { success: false };
+  // data.totalSupply = 3;
   data.actions = confData.actions;
   data.actions = confData.actions.map(action => {
-  data.dropId = "ctx:alfamon/drops/gen0day1";
+  // data.dropId = "ctx:alfamon/drops/gen0day1";
     if (action.secret && action.secret !== '') {
         action.secret = encrypt(flexMarketPubKey, action.secret);
     }
@@ -108,7 +108,7 @@ async function updateMetadata(context, confData, domainName, collectionDocument,
   // data.webHookSecret = await encrypt(flexMarketPubKey, confData.webHookSecret);
   spinStart(`Updating NFT Contract Metadata in Context : ${confData.path}`);
     const document = await context.document(`${domainName}/nft`);
-    // const res = await document.data.update(data);
+    const res = await document.data.update(data);
   spinStop();
 
   /*const drop = await context.document(`${domainName}/drops/gen0day1`);

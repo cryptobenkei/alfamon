@@ -102,10 +102,12 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
             // Verify Secret
         break;
         case 'follow':
-            // const found = await isFollower(, 8691);
+            const followFid = projectDoc.actions[level].fid;
+            const found = await isFollower(followFid, nft.requesterId);
+            if (found) levelUp = true;
+            else return "Need to follow first";
         break;
     }
-
     if (levelUp) {
         await db.nftCollection.updateOne(
             { tokenId: token },

@@ -25,7 +25,7 @@
         "name": "Follow Up",
         "type": "follow",
         "description": "Follow @cryptobenkei and click the button 'Follow Up'",
-        "caster": "@cryptobenkei",
+        "fid": 8691,
         "input": "",
         "secret": "",
         "cooldown": 86400
