@@ -16,13 +16,13 @@ export async function getUser(fid) {
     });
 }
 
-export async function cast(fid, urlMetadata) {
+export async function cast(fid, tokenId) {
   console.log(process.env.NEYNAR_API);
   console.log(process.env.NEYNAR_FID);
   console.log(process.env.NEYNAR_SIGNER);
     const user: any = await getUser(fid);
-    console.log(user);
-    const text: string = `Congrats @${user.username}, you now own an exclusive Alfamon 🪐. Remember to take care of it to hatch the egg : ${urlMetadata}`
+    const shareUrl = "https://ctx.frame.xyz/alfamon?tokenId=" + tokenId;
+    const text: string = `Congrats @${user.username}, you now own an exclusive Alfamon 🪐. Remember to take care of it to hatch the egg : ${shareUrl}`
     const url = 'https://api.neynar.com/v2/farcaster/cast';
     const options: any = {
       method: 'POST',

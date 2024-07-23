@@ -82,11 +82,9 @@ collectionContract.on("Minted", async (tokenId, dropId, event) => {
   await updateTx(db, transactionId, tokenId, owner);
  
   log('Drop metadata        : ', `https://app.ctx.xyz/d/${domainName}/drops/${dropName}` )
-  const urlMetadata = `https://app.ctx.xyz/d/${domainName}/drops/${dropName}`;
-
   let nft = await db.nftCollection.findOne({transactionId});
   if (nft && nft.requesterId) {
-    await cast(nft.requesterId, urlMetadata);
+    await cast(nft.requesterId, tokenId);
   }
 });
   };
