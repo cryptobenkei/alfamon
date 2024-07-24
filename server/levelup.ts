@@ -1,21 +1,6 @@
-import { NeynarAPIClient } from '@neynar/nodejs-sdk';
 import { getContext } from "../scripts/utils";
+import { isFollower } from "./actions/follower";
 
-
-async function isFollower(fid, fidFollower) {
-    const client = new NeynarAPIClient(process.env.NEYNAR_API as string);
-    let found;
-    let options: any = {};
-    do {
-        const response = await client.fetchUserFollowers(fid, options);
-        const users = response.result.users;
-        found = users.find((follow) => follow.fid === fidFollower);
-        if (response.result.users[0] === fid) found = true;
-        options = { cursor: response.result.next.cursor };
-    } while (found === false && options.cursor !== null)
-    return found;
-
-}
 
 function getLastNumber(str: string): number | null {
     // Use a regular expression to match the last number in the string
@@ -40,7 +25,7 @@ export const updateMetadata = async(data) => {
         const newData: any = {...nft.data};
         newData.level = data.newLevel;
         newData.image = `https://rpc.ctx.xyz/${domainName}/assets/level${data.newLevel}`;
-        newData.leveledUp = data.leveledUp;
+        newData.nextLevelUp = data.nextLevelUp;
         console.log('*** Update NFT!', newData);
         await nft.update(newData);
         return true;
@@ -75,16 +60,12 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
         return `Nothing to do at level ${level}... Check again later`;
     }
 
-    // Verify Cooldown
+    // Verify Cooldown (ts in seconds).
     const currentTimestamp = Math.floor(Date.now() / 1000);
-    const cooldown = projectDoc.actions[level].cooldown || 0;
-    if (cooldown > 0) {
-        const lastLevelUpTimestamp = nftDoc.lastLevelUp || 0;
-        const timeSinceLastLevelUp = currentTimestamp - lastLevelUpTimestamp;
-        if (timeSinceLastLevelUp < cooldown) {
-            const remainingCooldown = cooldown - timeSinceLastLevelUp;
-            return `Cooldown active. Please wait ${remainingCooldown} seconds before leveling up again.`;
-        }
+    const tsLevelUp = nft.nextLevelUp ? nft.nextLevelUp : 0;
+    if (tsLevelUp > 0 && tsLevelUp < currentTimestamp) {
+        const remainingCooldown = tsLevelUp - currentTimestamp;
+        return `Cooldown active. Please wait ${remainingCooldown} seconds before leveling up again.`;
     }
 
     // Verify Action
@@ -94,6 +75,7 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
             levelUp = true;
         break;
         case 'secret':
+            console.log("secret: " + inputText);
             if (inputText === 'alfamon') {
                 levelUp = true;
             } else {
@@ -109,13 +91,15 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
         break;
     }
     if (levelUp) {
+        const cooldown = projectDoc.actions[level].cooldown || 0;
+        const nextLevelUp = currentTimestamp + cooldown
         await db.nftCollection.updateOne(
             { tokenId: token },
-            { 
-            $set: { level: newLevel, leveledUp: currentTimestamp }
+            {
+                $set: { level: newLevel, nextLevelUp: nextLevelUp }
             }
         );
-        await nftQueue.add('levelUp', { tokenId, newLevel, leveledUp: currentTimestamp });
+        await nftQueue.add('levelUp', { tokenId, newLevel, nextLevelUp });
         return `Your Alfamon is now at Level ${newLevel}`
     } else {
         return 'Level Up Failed'   
