@@ -15,6 +15,19 @@ function getLastNumber(str: string): number | null {
     return null;
 }
 
+const hoursAndMinutes = (timeInSec) => {
+    const date = new Date(timeInSec);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const minute = (minutes > 1) ? `${minutes} minutes`: `${minutes} minute`
+    if (hours > 0) {
+        const hour = (hours > 1) ? `${hours} hours` : `${hours} hour`;
+        return `${hour} and ${minute}`;
+    } else {
+        return `${minute}`;
+    }
+  };
+
 export const updateMetadata = async(data) => {
     const { context, domainName } = await getContext(true);
     const result = await context.document(`${data.tokenId}`);
@@ -63,9 +76,10 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
     // Verify Cooldown (ts in seconds).
     const currentTimestamp = Math.floor(Date.now() / 1000);
     const tsLevelUp = nft.nextLevelUp ? nft.nextLevelUp : 0;
-    if (tsLevelUp > 0 && tsLevelUp < currentTimestamp) {
+    if (tsLevelUp > 0 && tsLevelUp > currentTimestamp) {
         const remainingCooldown = tsLevelUp - currentTimestamp;
-        return `Cooldown active. Please wait ${remainingCooldown} seconds before leveling up again.`;
+        const timeRemaining = hoursAndMinutes(remainingCooldown);
+        return `Cooldown active. Please wait ${timeRemaining} seconds before leveling up again.`;
     }
 
     // Verify Action
