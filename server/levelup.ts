@@ -16,9 +16,13 @@ function getLastNumber(str: string): number | null {
 }
 
 const hoursAndMinutes = (timeInSec) => {
-    const date = new Date(timeInSec);
+	console.log(timeInSec);
+    const date = new Date(timeInSec * 1000);
+    console.log(date);
     const hours = date.getHours();
+    console.log('Hours '+hours);
     const minutes = date.getMinutes();
+    console.log('Minutes '+minutes);
     const minute = (minutes > 1) ? `${minutes} minutes`: `${minutes} minute`
     if (hours > 0) {
         const hour = (hours > 1) ? `${hours} hours` : `${hours} hour`;
@@ -75,11 +79,13 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
 
     // Verify Cooldown (ts in seconds).
     const currentTimestamp = Math.floor(Date.now() / 1000);
+    console.log(currentTimestamp);
+    console.log(nft.nextLevelUp);
     const tsLevelUp = nft.nextLevelUp ? nft.nextLevelUp : 0;
     if (tsLevelUp > 0 && tsLevelUp > currentTimestamp) {
         const remainingCooldown = tsLevelUp - currentTimestamp;
         const timeRemaining = hoursAndMinutes(remainingCooldown);
-        return `Cooldown active. Please wait ${timeRemaining} seconds before leveling up again.`;
+        return `Cooldown active. Please wait ${timeRemaining} before leveling up again.`;
     }
 
     // Verify Action
@@ -99,6 +105,7 @@ export async function levelUp(db: any, nftQueue, tokenId: string, inputText: str
         break;
         case 'follow':
             const followFid = projectDoc.actions[level].fid;
+	console.log('Check Follow ' + followFid);
             const found = await isFollower(followFid, nft.requesterId);
             if (found) levelUp = true;
             else return "Need to follow first";

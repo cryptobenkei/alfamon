@@ -46,12 +46,12 @@ app.get('/check', async (req: Request, res: Response) => {
 
 app.post('/levelup', verifyApiKey, async (req: Request, res: Response) => {
   console.log("LEVELUP **", req.body);
-  const { tokenId, inputText } = req.body;
+  const { tokenId, textInput } = req.body;
   
   if (!tokenId) {
     return res.status(400).json({ error: 'tokenId is required' });
   }
-  const message = await levelUp(db, nftQueue, tokenId, inputText );
+  const message = await levelUp(db, nftQueue, tokenId, textInput );
   await updateLogs(db, tokenId, 'levelUp');
   res.json({ message });
 });
