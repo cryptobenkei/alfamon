@@ -22,10 +22,19 @@
         "cooldown": 86400
     },
     {
-        "name": "Follow Up",
+        "name": "Check",
         "type": "follow",
-        "description": "Follow @cryptobenkei and click the button 'Follow Up'",
+        "description": "Follow @cryptobenkei and click on the button Check",
         "fid": 8691,
+        "input": "",
+        "secret": "",
+        "cooldown": 86400
+    },
+    {
+        "name": "Check",
+        "type": "follow",
+        "description": "Follow @contextprotocol and click on the button Check",
+        "fid": 525636,
         "input": "",
         "secret": "",
         "cooldown": 86400

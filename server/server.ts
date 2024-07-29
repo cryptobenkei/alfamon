@@ -17,10 +17,7 @@ const port = 3001;
 const connection = new IORedis(redisOptions);
 const nftQueue = new Queue('NFTs', { connection });
 const worker = new Worker('NFTs', async job => {
-  // Will print { foo: 'bar'} for the first job
-  // and { qux: 'baz' } for the second.
   await updateMetadata(job.data);
-  console.log(job.data);
 }, { connection });
 
 worker.on('completed', job => {
