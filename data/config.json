@@ -38,6 +38,17 @@
         "input": "",
         "secret": "",
         "cooldown": 86400
+    },
+    {
+        "name": "Check",
+        "type": "reaction",
+        "description": "Like and Recast the cast from @alfamon",
+        "fid": 791055,
+        "castHash": "0x3ee3b60e8f45b77611ea202d20d187e8a6b3cb54",
+        "actions": "recast,like",
+        "input": "",
+        "secret": "6b3ayPY24f7R2Vk8a2A5fH6Qb",
+        "cooldown": 86400
     }],
     "drops": {
         "gen0day1": {

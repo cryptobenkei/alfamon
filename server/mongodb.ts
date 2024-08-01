@@ -3,8 +3,12 @@ import dotenv from "dotenv";
 dotenv.config();
 
 let db: Db;
+
 let logsCollection: Collection;
 let nftCollection: Collection;
+let userCollection: Collection;
+let missionsCollection: Collection;
+let userMissionCollection: Collection;
 
 export function initMongoDB() {
     return new Promise((resolve) => {
@@ -17,10 +21,17 @@ export function initMongoDB() {
         db = client.db(dbName);
         nftCollection = db.collection('nfts');
         logsCollection = db.collection('logs');
+        missionsCollection  = db.collection('missions');
+        userCollection  = db.collection('users');
+        userMissionCollection = db.collection('users_missions');
         console.log('Connected to MongoDB');
-        resolve ( { nftCollection, logsCollection });
+        resolve ( { nftCollection, logsCollection, missionsCollection, userCollection, userMissionCollection });
     }).catch((err: any) => console.error(err));
     });
+}
+export async function getMissionsByFid(fid) {
+    const nfts = await nftCollection.find({requesterId: fid});
+    return await nfts.toArray();
 }
 
 export async function updateLogs(db: any, id: string, action: string = '') {
@@ -53,7 +64,16 @@ export async function insertTx(db: any, transactionId: string, dropId: string, c
         { transactionId },
         { $set: { dropId, minted: currentDate, casterId, requesterId } }
     );
-}
+  }
+  let user = await db.userCollection.findOne({fid: requesterId });
+  if (!user) {
+    user = await db.nftCollection.insertOne({
+      fid: requesterId,
+      date: currentDate,
+      level:0,
+      leveledUp: currentTimestamp
+    })
+  }
 }
 
 export async function updateTx(db: any, transactionId: string, tokenId: string, owner: string) {
